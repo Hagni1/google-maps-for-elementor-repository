@@ -138,12 +138,302 @@ class Google_Maps_Widget extends Widget_Base
 
         $this->end_controls_section();
 
+        // New Advanced Configuration Tab
+        $this->start_controls_section(
+            'section_advanced_config',
+            [
+                'label' => __('Advanced Configuration', 'google-maps-for-elementor'),
+                'tab' => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        // Add documentation link
+        $this->add_control(
+            'advanced_options_docs',
+            [
+                'type' => Controls_Manager::RAW_HTML,
+                'raw' => '<small><a href="https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions" target="_blank">View Google Maps Options Documentation »</a></small>',
+                'separator' => 'after',
+            ]
+        );
+
+        $this->add_control(
+            'rendering_type',
+            [
+                'label' => __('Rendering Type', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'RASTER',
+                'options' => [
+                    'RASTER' => __('Raster', 'google-maps-for-elementor'),
+                    'UNSPECIFIED' => __('Unspecified', 'google-maps-for-elementor'),
+                    'VECTOR' => __('Vector', 'google-maps-for-elementor'),
+                ],
+                'description' => __('Choose how the map should be rendered.', 'google-maps-for-elementor'),
+            ]
+        );
+
+        $this->add_control(
+            'tilt',
+            [
+                'label' => __('Tilt', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 0,
+                'min' => 0,
+                'max' => 45,
+                'description' => __('Controls the angle of 45° imagery, value from 0 to 45.', 'google-maps-for-elementor'),
+            ]
+        );
+
+        $this->add_control(
+            'tilt_interaction_enabled',
+            [
+                'label' => __('Enable Tilt Interaction', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+                'description' => __('Allow users to change the tilt.', 'google-maps-for-elementor'),
+            ]
+        );
+
+        $this->add_control(
+            'restriction_enabled',
+            [
+                'label' => __('Enable Map Restrictions', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'no',
+            ]
+        );
+
+        $this->add_control(
+            'restriction_lat_north',
+            [
+                'label' => __('North Latitude Bound', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 85,
+                'condition' => ['restriction_enabled' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'restriction_lat_south',
+            [
+                'label' => __('South Latitude Bound', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => -85,
+                'condition' => ['restriction_enabled' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'restriction_lng_east',
+            [
+                'label' => __('East Longitude Bound', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 180,
+                'condition' => ['restriction_enabled' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'restriction_lng_west',
+            [
+                'label' => __('West Longitude Bound', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => -180,
+                'condition' => ['restriction_enabled' => 'yes'],
+            ]
+        );
+
+        $this->add_control(
+            'background_color',
+            [
+                'label' => __('Background Color', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::COLOR,
+                'default' => '',
+                'description' => __('Set a custom background color for the map. Leave empty for default.', 'google-maps-for-elementor'),
+            ]
+        );
+
+        $this->add_control(
+            'disable_default_ui',
+            [
+                'label' => __('Disable Default UI', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'no',
+            ]
+        );
+
+        $this->add_control(
+            'camera_control',
+            [
+                'label' => __('Camera Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'fullscreen_control',
+            [
+                'label' => __('Fullscreen Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'clickable_icons',
+            [
+                'label' => __('Clickable Icons', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'color_scheme',
+            [
+                'label' => __('Color Scheme', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'light',
+                'options' => [
+                    'light' => __('Light', 'google-maps-for-elementor'),
+                    'dark' => __('Dark', 'google-maps-for-elementor'),
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'disable_double_click_zoom',
+            [
+                'label' => __('Disable Double Click Zoom', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'gesture_handling',
+            [
+                'label' => __('Gesture Handling', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'auto',
+                'options' => [
+                    'auto' => __('Auto', 'google-maps-for-elementor'),
+                    'none' => __('None', 'google-maps-for-elementor'),
+                    'cooperative' => __('Cooperative', 'google-maps-for-elementor'),
+                    'greedy' => __('Greedy', 'google-maps-for-elementor'),
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'keyboard_shortcuts',
+            [
+                'label' => __('Keyboard Shortcuts', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'max_zoom',
+            [
+                'label' => __('Maximum Zoom Level', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 20,
+                'min' => 1,
+                'max' => 20,
+            ]
+        );
+
+        $this->add_control(
+            'min_zoom',
+            [
+                'label' => __('Minimum Zoom Level', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::NUMBER,
+                'default' => 5,
+                'min' => 1,
+                'max' => 20,
+            ]
+        );
+
+        $this->add_control(
+            'rotate_control',
+            [
+                'label' => __('Rotate Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'scale_control',
+            [
+                'label' => __('Scale Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'scrollwheel',
+            [
+                'label' => __('Scroll Wheel Zoom', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'zoom_control',
+            [
+                'label' => __('Zoom Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'street_view',
+            [
+                'label' => __('Street View', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->add_control(
+            'street_view_control',
+            [
+                'label' => __('Street View Control', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SWITCHER,
+                'default' => 'yes',
+            ]
+        );
+
+        $this->end_controls_section();
+
         // New Style Tab: Map Style
         $this->start_controls_section(
             'section_style',
             [
                 'label' => __('Map Style', 'google-maps-for-elementor'),
                 'tab' => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_control(
+            'map_type',
+            [
+                'label' => __('Map Type', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'roadmap',
+                'options' => [
+                    'roadmap' => __('Roadmap', 'google-maps-for-elementor'),
+                    'satellite' => __('Satellite', 'google-maps-for-elementor'),
+                    'hybrid' => __('Hybrid', 'google-maps-for-elementor'),
+                    'terrain' => __('Terrain', 'google-maps-for-elementor'),
+                ],
             ]
         );
 
@@ -232,7 +522,38 @@ class Google_Maps_Widget extends Widget_Base
                     'lat' => floatval($location['lat']),
                     'lng' => floatval($location['lng'])
                 ];
-            }, $settings['locations'])
+            }, $settings['locations']),
+            'backgroundColor' => !empty($settings['background_color']) ? $settings['background_color'] : null,
+            'disableDefaultUI' => $settings['disable_default_ui'] === 'yes',
+            'cameraControl' => $settings['camera_control'] === 'yes',
+            'fullscreenControl' => $settings['fullscreen_control'] === 'yes',
+            'clickableIcons' => $settings['clickable_icons'] === 'yes',
+            'colorScheme' => $settings['color_scheme'],
+            'disableDoubleClickZoom' => $settings['disable_double_click_zoom'] === 'yes',
+            'gestureHandling' => $settings['gesture_handling'],
+            'keyboardShortcuts' => $settings['keyboard_shortcuts'] === 'yes',
+            'maxZoom' => intval($settings['max_zoom']),
+            'minZoom' => intval($settings['min_zoom']),
+            'rotateControl' => $settings['rotate_control'] === 'yes',
+            'scaleControl' => $settings['scale_control'] === 'yes',
+            'scrollwheel' => $settings['scrollwheel'] === 'yes',
+            'zoomControl' => $settings['zoom_control'] === 'yes',
+            'streetView' => $settings['street_view'] === 'yes',
+            'streetViewControl' => $settings['street_view_control'] === 'yes',
+            // Add new configuration options
+            'renderingType' => $settings['rendering_type'],
+            'mapTypeId' => $settings['map_type'],
+            'tilt' => intval($settings['tilt']),
+            'tiltInteractionEnabled' => $settings['tilt_interaction_enabled'] === 'yes',
+            'restriction' => $settings['restriction_enabled'] === 'yes' ? [
+                'latLngBounds' => [
+                    'north' => floatval($settings['restriction_lat_north']),
+                    'south' => floatval($settings['restriction_lat_south']),
+                    'east' => floatval($settings['restriction_lng_east']),
+                    'west' => floatval($settings['restriction_lng_west'])
+                ],
+                'strictBounds' => true
+            ] : null
         ];
 
         $style = 'width: ' . $settings['map_width'] . '; height: ' . $settings['map_height'] . ';';
@@ -244,10 +565,8 @@ class Google_Maps_Widget extends Widget_Base
     protected function _content_template()
     {
         ?>
-        <# var style = 'width: ' + settings.map_width + '; height: ' + settings.map_height + ';';
-            #>
-            <div id="gme-map" style="{{ style }}"
-              > Here will be map </div>
+        <# var style='width: ' + settings.map_width + '; height: ' + settings.map_height + ';' ; #>
+            <div id="gme-map" style="{{ style }}"> Here will be map </div>
             <?php
     }
 }
