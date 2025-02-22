@@ -39,6 +39,9 @@ class Google_Maps_Widget extends Widget_Base
     {
         parent::__construct($data, $args);
 
+        // Register Axios
+        wp_register_script('axios', 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js', array(), null, true);
+
         wp_register_style(
             'gme-widget-style',
             false
@@ -96,7 +99,39 @@ class Google_Maps_Widget extends Widget_Base
             [
                 'label' => __('Location Name', 'google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
+                'dynamic' => [
+                    'active' => true,
+                ],
                 'default' => __('New Location', 'google-maps-for-elementor'),
+            ]
+        );
+
+        $repeater->add_control(
+            'position_type',
+            [
+                'label' => __('Position Type', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::SELECT,
+                'default' => 'coordinates',
+                'options' => [
+                    'coordinates' => __('Coordinates', 'google-maps-for-elementor'),
+                    'address' => __('Address', 'google-maps-for-elementor'),
+                ],
+            ]
+        );
+
+        $repeater->add_control(
+            'address',
+            [
+                'label' => __('Address', 'google-maps-for-elementor'),
+                'type' => Controls_Manager::TEXT,
+                'default' => '',
+                'dynamic' => [
+                    'active' => true,
+                ],
+                'description' => __('Enter a full address to automatically get coordinates', 'google-maps-for-elementor'),
+                'condition' => [
+                    'position_type' => 'address',
+                ],
             ]
         );
 
@@ -106,6 +141,12 @@ class Google_Maps_Widget extends Widget_Base
                 'label' => __('Latitude', 'google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
+                'dynamic' => [
+                    'active' => true,
+                ],
+                'condition' => [
+                    'position_type' => 'coordinates',
+                ],
             ]
         );
 
@@ -115,6 +156,12 @@ class Google_Maps_Widget extends Widget_Base
                 'label' => __('Longitude', 'google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
+                'dynamic' => [
+                    'active' => true,
+                ],
+                'condition' => [
+                    'position_type' => 'coordinates',
+                ],
             ]
         );
 
@@ -525,6 +572,9 @@ class Google_Maps_Widget extends Widget_Base
         $settings = $this->get_settings_for_display();
         $map_id = 'gme-map-' . $this->get_id();
 
+        // Enqueue Axios
+        wp_enqueue_script('axios');
+
         // Calculate center based on center_type
         if ('manual' === $settings['center_type'] && !empty($settings['center_lat']) && !empty($settings['center_lng'])) {
             $center_lat = $settings['center_lat'];
@@ -536,16 +586,24 @@ class Google_Maps_Widget extends Widget_Base
                 $total_lng = 0;
                 $count = 0;
                 foreach ($locations as $location) {
-                    if (!empty($location['lat']) && !empty($location['lng'])) {
+                    if ($location['position_type'] === 'coordinates' && !empty($location['lat']) && !empty($location['lng'])) {
                         $total_lat += floatval($location['lat']);
                         $total_lng += floatval($location['lng']);
                         $count++;
+                    } elseif ($location['position_type'] === 'address' && !empty($location['address'])) {
+                        // For addresses, we'll set a temporary center that will be updated by JavaScript
+                        // This ensures the map has an initial center point
+                        if ($count === 0) {
+                            $center_lat = -34.397;
+                            $center_lng = 150.644;
+                        }
                     }
                 }
                 if ($count > 0) {
                     $center_lat = $total_lat / $count;
                     $center_lng = $total_lng / $count;
-                } else {
+                } elseif (!isset($center_lat)) {
+                    // Default center if no valid locations found
                     $center_lat = -34.397;
                     $center_lng = 150.644;
                 }
@@ -565,6 +623,8 @@ class Google_Maps_Widget extends Widget_Base
             'locations' => array_map(function ($location) {
                 return [
                     'name' => $location['location_name'],
+                    'position_type' => $location['position_type'],
+                    'address' => $location['address'],
                     'lat' => floatval($location['lat']),
                     'lng' => floatval($location['lng'])
                 ];
@@ -603,7 +663,13 @@ class Google_Maps_Widget extends Widget_Base
         ];
 
         $style = 'width: ' . $settings['map_width'] . '; height: ' . $settings['map_height'] . ';';
+
+        // Get API key for geocoding
+        $api_key = get_option('gme_api_key', '');
         ?>
+        <script>
+            window.gmeApiKey = '<?php echo esc_js($api_key); ?>';
+        </script>
         <div class="gme-map-wrapper">
             <div id="<?php echo esc_attr($map_id); ?>" class="gme-map" style="<?php echo esc_attr($style); ?>"
                 data-map-settings="<?php echo esc_attr(json_encode($map_data)); ?>">

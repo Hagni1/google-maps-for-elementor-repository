@@ -24,21 +24,13 @@ function gme_enqueue_scripts()
     // Get the API key from the options
     $api_key = get_option('gme_api_key', 'YOUR_GOOGLE_MAPS_API_KEY');
 
-    // Remove the old Google Maps API registration
-    // wp_register_script('gme-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key), array(), null, true);
-    // wp_enqueue_script('gme-google-maps');
+    // Register and enqueue Google Maps API with geocoding library
+    wp_register_script('gme-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '&libraries=geocoding', array(), null, true);
+    wp_enqueue_script('gme-google-maps');
 
-    // Register loader script and add inline module import code
-    wp_register_script('gme-google-maps-loader', '', array(), null, true);
-    $module_script = '
-(g=>{var h,a,k,p="The Google Maps JavaScript API",c="google",l="importLibrary",q="__ib__",m=document,b=window;b=b[c]||(b[c]={});var d=b.maps||(b.maps={}),r=new Set,e=new URLSearchParams,u=()=>h||(h=new Promise(async(f,n)=>{await (a=m.createElement("script"));e.set("libraries",[...r]+"");for(k in g)e.set(k.replace(/[A-Z]/g,t=>"_"+t[0].toLowerCase()),g[k]);e.set("callback",c+".maps."+q);a.src=`https://maps.${c}apis.com/maps/api/js?`+e;d[q]=f;a.onerror=()=>h=n(Error(p+" could not load."));a.nonce=m.querySelector("script[nonce]")?.nonce||"";m.head.append(a)}));d[l]?console.warn(p+" only loads once. Ignoring:",g):d[l]=(f,...n)=>r.add(f)&&u().then(()=>d[l](f,...n))})({
-    key: "' . esc_attr($api_key) . '",
-    v: "weekly",
-    libraries: ["maps, maker"]
-  });
-';
-    wp_add_inline_script('gme-google-maps-loader', $module_script);
-    wp_enqueue_script('gme-google-maps-loader');
+    // Register and enqueue our map initialization script
+    wp_register_script('gme-maps-init', plugins_url('/assets/js/map.js', __FILE__), array('gme-google-maps', 'axios'), null, true);
+    wp_enqueue_script('gme-maps-init');
 }
 add_action('wp_enqueue_scripts', 'gme_enqueue_scripts');
 
@@ -82,12 +74,31 @@ function gme_settings_page()
     ?>
     <div class="wrap">
         <h1><?php esc_html_e('Google Maps API Key', 'google-maps-for-elementor'); ?></h1>
+        <div class="notice notice-info">
+            <p><?php esc_html_e('Important: Make sure to enable the following APIs in your Google Cloud Console:', 'google-maps-for-elementor'); ?>
+            </p>
+            <ul style="list-style-type: disc; margin-left: 20px;">
+                <li><?php esc_html_e('Maps JavaScript API', 'google-maps-for-elementor'); ?></li>
+                <li><?php esc_html_e('Geocoding API - Required for address to coordinates conversion', 'google-maps-for-elementor'); ?>
+                </li>
+            </ul>
+            <p><?php printf(
+                /* translators: %s: Google Cloud Console URL */
+                esc_html__('Visit %s to enable these APIs for your project.', 'google-maps-for-elementor'),
+                '<a href="https://console.cloud.google.com/apis/library" target="_blank">Google Cloud Console</a>'
+            ); ?></p>
+        </div>
         <form method="post" action="">
             <?php wp_nonce_field('gme_update_api_key'); ?>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row"><?php esc_html_e('API Key', 'google-maps-for-elementor'); ?></th>
-                    <td><input type="text" name="gme_api_key" value="<?php echo esc_attr($api_key); ?>" size="50" /></td>
+                    <td>
+                        <input type="text" name="gme_api_key" value="<?php echo esc_attr($api_key); ?>" size="50" />
+                        <p class="description">
+                            <?php esc_html_e('Enter your Google Maps API key. Both Maps JavaScript API and Geocoding API must be enabled.', 'google-maps-for-elementor'); ?>
+                        </p>
+                    </td>
                 </tr>
             </table>
             <?php submit_button(__('Save API Key', 'google-maps-for-elementor'), 'primary', 'gme_api_key_submit'); ?>
