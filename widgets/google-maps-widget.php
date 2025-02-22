@@ -30,6 +30,52 @@ class Google_Maps_Widget extends Widget_Base
         return ['general'];
     }
 
+    public function get_style_depends()
+    {
+        return ['gme-widget-style'];
+    }
+
+    public function __construct($data = [], $args = null)
+    {
+        parent::__construct($data, $args);
+
+        wp_register_style(
+            'gme-widget-style',
+            false
+        );
+
+        wp_add_inline_style('gme-widget-style', '
+            .gme-map-wrapper {
+                position: relative;
+                width: 100%;
+            }
+            .gme-map-placeholder {
+                background-color: #f7f7f7;
+                border: 1px dashed #d5dadf;
+                border-radius: 3px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .gme-map-info {
+                text-align: center;
+                padding: 20px;
+                color: #6d7882;
+            }
+            .gme-map-info .eicon-google-maps {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+            .gme-map-notice {
+                margin-bottom: 5px;
+            }
+            .gme-map-locations {
+                font-size: 12px;
+                font-style: italic;
+            }
+        ');
+    }
+
     protected function _register_controls()
     {
         // ...existing basic controls... 
@@ -557,7 +603,29 @@ class Google_Maps_Widget extends Widget_Base
         ];
 
         $style = 'width: ' . $settings['map_width'] . '; height: ' . $settings['map_height'] . ';';
-        echo '<div id="' . esc_attr($map_id) . '" class="gme-map" style="' . esc_attr($style) . '" data-map-settings="' . esc_attr(json_encode($map_data)) . '"></div>';
+        ?>
+        <div class="gme-map-wrapper">
+            <div id="<?php echo esc_attr($map_id); ?>" class="gme-map" style="<?php echo esc_attr($style); ?>"
+                data-map-settings="<?php echo esc_attr(json_encode($map_data)); ?>">
+                <div class="gme-map-placeholder" style="<?php echo esc_attr($style); ?>">
+                    <div class="gme-map-info">
+                        <i class="eicon-google-maps" aria-hidden="true"></i>
+                        <div class="gme-map-notice">
+                            <?php esc_html_e('Google Map will be displayed here', 'google-maps-for-elementor'); ?>
+                        </div>
+                        <?php if (!empty($settings['locations'])): ?>
+                            <div class="gme-map-locations">
+                                <?php echo esc_html(sprintf(
+                                    __('Locations added: %d', 'google-maps-for-elementor'),
+                                    count($settings['locations'])
+                                )); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <?php
 
         wp_enqueue_script('gme-maps-init', plugins_url('../assets/js/map.js', __FILE__), array('gme-google-maps-loader'), null, true);
     }
@@ -565,8 +633,26 @@ class Google_Maps_Widget extends Widget_Base
     protected function _content_template()
     {
         ?>
-        <# var style='width: ' + settings.map_width + '; height: ' + settings.map_height + ';' ; #>
-            <div id="gme-map" style="{{ style }}"> Here will be map </div>
+        <# var mapId='elementor-preview-' + view.getID(); var style='width: ' + settings.map_width + '; height: ' +
+            settings.map_height + ';' ; #>
+            <div class="gme-map-wrapper">
+                <div id="{{ mapId }}" class="gme-map" style="{{ style }}">
+                    <div class="gme-map-placeholder" style="{{ style }}">
+                        <div class="gme-map-info">
+                            <i class="eicon-google-maps" aria-hidden="true"></i>
+                            <div class="gme-map-notice">
+                                <?php esc_html_e('Google Map will be displayed here', 'google-maps-for-elementor'); ?>
+                            </div>
+                            <# if (settings.locations && settings.locations.length> 0) { #>
+                                <div class="gme-map-locations">
+                                    <?php esc_html_e('Locations added:', 'google-maps-for-elementor'); ?> {{
+                                    settings.locations.length }}
+                                </div>
+                                <# } #>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <?php
     }
 }
