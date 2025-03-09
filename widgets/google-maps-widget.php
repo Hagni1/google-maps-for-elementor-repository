@@ -17,7 +17,7 @@ class Google_Maps_Widget extends Widget_Base
 
     public function get_title()
     {
-        return __('Advanced Google Maps', 'google-maps-for-elementor');
+        return __('Advanced Google Maps', 'advanced-google-maps-for-elementor');
     }
 
     public function get_icon()
@@ -27,7 +27,7 @@ class Google_Maps_Widget extends Widget_Base
 
     public function get_categories()
     {
-        return ['general'];
+        return ['advanced-google-maps-for-elementor'];
     }
 
     public function get_style_depends()
@@ -39,12 +39,16 @@ class Google_Maps_Widget extends Widget_Base
     {
         parent::__construct($data, $args);
 
+        $version = GME_VERSION ?? '1.0.0';
         // Register Axios
-        wp_register_script('axios', 'https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js', array(), null, true);
+        wp_register_script('axios', plugins_url('/assets/js/lib/axios.min.js', __FILE__), array(), $version, true);
 
+        // Register widget styles with version
         wp_register_style(
             'gme-widget-style',
-            false
+            false,
+            array(),
+            $version
         );
 
         wp_add_inline_style('gme-widget-style', '
@@ -81,13 +85,11 @@ class Google_Maps_Widget extends Widget_Base
 
     protected function _register_controls()
     {
-        // ...existing basic controls... 
-
         // Advanced Options: Locations Tab
         $this->start_controls_section(
             'section_locations',
             [
-                'label' => __('Locations', 'google-maps-for-elementor'),
+                'label' => __('Locations', 'advanced-google-maps-for-elementor'),
                 'tab' => Controls_Manager::TAB_CONTENT, // changed from TAB_LAYOUT to TAB_CONTENT
             ]
         );
@@ -97,24 +99,24 @@ class Google_Maps_Widget extends Widget_Base
         $repeater->add_control(
             'location_name',
             [
-                'label' => __('Location Name', 'google-maps-for-elementor'),
+                'label' => __('Location Name', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'dynamic' => [
                     'active' => true,
                 ],
-                'default' => __('New Location', 'google-maps-for-elementor'),
+                'default' => __('New Location', 'advanced-google-maps-for-elementor'),
             ]
         );
 
         $repeater->add_control(
             'position_type',
             [
-                'label' => __('Position Type', 'google-maps-for-elementor'),
+                'label' => __('Position Type', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'coordinates',
                 'options' => [
-                    'coordinates' => __('Coordinates', 'google-maps-for-elementor'),
-                    'address' => __('Address', 'google-maps-for-elementor'),
+                    'coordinates' => __('Coordinates', 'advanced-google-maps-for-elementor'),
+                    'address' => __('Address', 'advanced-google-maps-for-elementor'),
                 ],
             ]
         );
@@ -122,13 +124,13 @@ class Google_Maps_Widget extends Widget_Base
         $repeater->add_control(
             'address',
             [
-                'label' => __('Address', 'google-maps-for-elementor'),
+                'label' => __('Address', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'dynamic' => [
                     'active' => true,
                 ],
-                'description' => __('Enter a full address to automatically get coordinates', 'google-maps-for-elementor'),
+                'description' => __('Enter a full address to automatically get coordinates', 'advanced-google-maps-for-elementor'),
                 'condition' => [
                     'position_type' => 'address',
                 ],
@@ -138,7 +140,7 @@ class Google_Maps_Widget extends Widget_Base
         $repeater->add_control(
             'lat',
             [
-                'label' => __('Latitude', 'google-maps-for-elementor'),
+                'label' => __('Latitude', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'dynamic' => [
@@ -153,7 +155,7 @@ class Google_Maps_Widget extends Widget_Base
         $repeater->add_control(
             'lng',
             [
-                'label' => __('Longitude', 'google-maps-for-elementor'),
+                'label' => __('Longitude', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'dynamic' => [
@@ -168,7 +170,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'locations',
             [
-                'label' => __('Locations', 'google-maps-for-elementor'),
+                'label' => __('Locations', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::REPEATER,
                 'fields' => $repeater->get_controls(),
                 'default' => [],
@@ -182,7 +184,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->start_controls_section(
             'section_center',
             [
-                'label' => __('Center Options', 'google-maps-for-elementor'),
+                'label' => __('Center Options', 'advanced-google-maps-for-elementor'),
                 'tab' => Controls_Manager::TAB_CONTENT,
             ]
         );
@@ -190,12 +192,12 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'center_type',
             [
-                'label' => __('Center Type', 'google-maps-for-elementor'),
+                'label' => __('Center Type', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'auto',
                 'options' => [
-                    'auto' => __('Auto', 'google-maps-for-elementor'),
-                    'manual' => __('Manual', 'google-maps-for-elementor'),
+                    'auto' => __('Auto', 'advanced-google-maps-for-elementor'),
+                    'manual' => __('Manual', 'advanced-google-maps-for-elementor'),
                 ],
             ]
         );
@@ -203,7 +205,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'center_lat',
             [
-                'label' => __('Center Latitude', 'google-maps-for-elementor'),
+                'label' => __('Center Latitude', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'condition' => ['center_type' => 'manual'],
@@ -213,7 +215,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'center_lng',
             [
-                'label' => __('Center Longitude', 'google-maps-for-elementor'),
+                'label' => __('Center Longitude', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '',
                 'condition' => ['center_type' => 'manual'],
@@ -223,7 +225,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'zoom',
             [
-                'label' => __('Zoom', 'google-maps-for-elementor'),
+                'label' => __('Zoom', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 8,
             ]
@@ -235,7 +237,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->start_controls_section(
             'section_advanced_config',
             [
-                'label' => __('Advanced Configuration', 'google-maps-for-elementor'),
+                'label' => __('Advanced Configuration', 'advanced-google-maps-for-elementor'),
                 'tab' => Controls_Manager::TAB_CONTENT,
             ]
         );
@@ -245,7 +247,7 @@ class Google_Maps_Widget extends Widget_Base
             'advanced_options_docs',
             [
                 'type' => Controls_Manager::RAW_HTML,
-                'raw' => '<small><a href="https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions" target="_blank">View Google Maps Options Documentation »</a></small>',
+                'raw' => '<small><a href="https://developers.google.com/maps/documentation/javascript/reference/map#MapOptions" target="_blank">' . esc_html__('View Google Maps Options Documentation »', 'advanced-google-maps-for-elementor') . '</a></small>',
                 'separator' => 'after',
             ]
         );
@@ -253,44 +255,44 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'rendering_type',
             [
-                'label' => __('Rendering Type', 'google-maps-for-elementor'),
+                'label' => __('Rendering Type', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'RASTER',
                 'options' => [
-                    'RASTER' => __('Raster', 'google-maps-for-elementor'),
-                    'UNSPECIFIED' => __('Unspecified', 'google-maps-for-elementor'),
-                    'VECTOR' => __('Vector', 'google-maps-for-elementor'),
+                    'RASTER' => __('Raster', 'advanced-google-maps-for-elementor'),
+                    'UNSPECIFIED' => __('Unspecified', 'advanced-google-maps-for-elementor'),
+                    'VECTOR' => __('Vector', 'advanced-google-maps-for-elementor'),
                 ],
-                'description' => __('Choose how the map should be rendered.', 'google-maps-for-elementor'),
+                'description' => __('Choose how the map should be rendered.', 'advanced-google-maps-for-elementor'),
             ]
         );
 
         $this->add_control(
             'tilt',
             [
-                'label' => __('Tilt', 'google-maps-for-elementor'),
+                'label' => __('Tilt', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 0,
                 'min' => 0,
                 'max' => 45,
-                'description' => __('Controls the angle of 45° imagery, value from 0 to 45.', 'google-maps-for-elementor'),
+                'description' => __('Controls the angle of 45° imagery, value from 0 to 45.', 'advanced-google-maps-for-elementor'),
             ]
         );
 
         $this->add_control(
             'tilt_interaction_enabled',
             [
-                'label' => __('Enable Tilt Interaction', 'google-maps-for-elementor'),
+                'label' => __('Enable Tilt Interaction', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
-                'description' => __('Allow users to change the tilt.', 'google-maps-for-elementor'),
+                'description' => __('Allow users to change the tilt.', 'advanced-google-maps-for-elementor'),
             ]
         );
 
         $this->add_control(
             'restriction_enabled',
             [
-                'label' => __('Enable Map Restrictions', 'google-maps-for-elementor'),
+                'label' => __('Enable Map Restrictions', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'no',
             ]
@@ -299,7 +301,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'restriction_lat_north',
             [
-                'label' => __('North Latitude Bound', 'google-maps-for-elementor'),
+                'label' => __('North Latitude Bound', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 85,
                 'condition' => ['restriction_enabled' => 'yes'],
@@ -309,7 +311,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'restriction_lat_south',
             [
-                'label' => __('South Latitude Bound', 'google-maps-for-elementor'),
+                'label' => __('South Latitude Bound', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => -85,
                 'condition' => ['restriction_enabled' => 'yes'],
@@ -319,7 +321,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'restriction_lng_east',
             [
-                'label' => __('East Longitude Bound', 'google-maps-for-elementor'),
+                'label' => __('East Longitude Bound', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 180,
                 'condition' => ['restriction_enabled' => 'yes'],
@@ -329,7 +331,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'restriction_lng_west',
             [
-                'label' => __('West Longitude Bound', 'google-maps-for-elementor'),
+                'label' => __('West Longitude Bound', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => -180,
                 'condition' => ['restriction_enabled' => 'yes'],
@@ -339,17 +341,17 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'background_color',
             [
-                'label' => __('Background Color', 'google-maps-for-elementor'),
+                'label' => __('Background Color', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::COLOR,
                 'default' => '',
-                'description' => __('Set a custom background color for the map. Leave empty for default.', 'google-maps-for-elementor'),
+                'description' => __('Set a custom background color for the map. Leave empty for default.', 'advanced-google-maps-for-elementor'),
             ]
         );
 
         $this->add_control(
             'disable_default_ui',
             [
-                'label' => __('Disable Default UI', 'google-maps-for-elementor'),
+                'label' => __('Disable Default UI', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'no',
             ]
@@ -358,7 +360,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'camera_control',
             [
-                'label' => __('Camera Control', 'google-maps-for-elementor'),
+                'label' => __('Camera Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -367,7 +369,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'fullscreen_control',
             [
-                'label' => __('Fullscreen Control', 'google-maps-for-elementor'),
+                'label' => __('Fullscreen Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -376,7 +378,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'clickable_icons',
             [
-                'label' => __('Clickable Icons', 'google-maps-for-elementor'),
+                'label' => __('Clickable Icons', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -385,12 +387,12 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'color_scheme',
             [
-                'label' => __('Color Scheme', 'google-maps-for-elementor'),
+                'label' => __('Color Scheme', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'light',
                 'options' => [
-                    'light' => __('Light', 'google-maps-for-elementor'),
-                    'dark' => __('Dark', 'google-maps-for-elementor'),
+                    'light' => __('Light', 'advanced-google-maps-for-elementor'),
+                    'dark' => __('Dark', 'advanced-google-maps-for-elementor'),
                 ],
             ]
         );
@@ -398,7 +400,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'disable_double_click_zoom',
             [
-                'label' => __('Disable Double Click Zoom', 'google-maps-for-elementor'),
+                'label' => __('Disable Double Click Zoom', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -407,14 +409,14 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'gesture_handling',
             [
-                'label' => __('Gesture Handling', 'google-maps-for-elementor'),
+                'label' => __('Gesture Handling', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'auto',
                 'options' => [
-                    'auto' => __('Auto', 'google-maps-for-elementor'),
-                    'none' => __('None', 'google-maps-for-elementor'),
-                    'cooperative' => __('Cooperative', 'google-maps-for-elementor'),
-                    'greedy' => __('Greedy', 'google-maps-for-elementor'),
+                    'auto' => __('Auto', 'advanced-google-maps-for-elementor'),
+                    'none' => __('None', 'advanced-google-maps-for-elementor'),
+                    'cooperative' => __('Cooperative', 'advanced-google-maps-for-elementor'),
+                    'greedy' => __('Greedy', 'advanced-google-maps-for-elementor'),
                 ],
             ]
         );
@@ -422,7 +424,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'keyboard_shortcuts',
             [
-                'label' => __('Keyboard Shortcuts', 'google-maps-for-elementor'),
+                'label' => __('Keyboard Shortcuts', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -431,7 +433,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'max_zoom',
             [
-                'label' => __('Maximum Zoom Level', 'google-maps-for-elementor'),
+                'label' => __('Maximum Zoom Level', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 20,
                 'min' => 1,
@@ -442,7 +444,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'min_zoom',
             [
-                'label' => __('Minimum Zoom Level', 'google-maps-for-elementor'),
+                'label' => __('Minimum Zoom Level', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::NUMBER,
                 'default' => 5,
                 'min' => 1,
@@ -453,7 +455,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'rotate_control',
             [
-                'label' => __('Rotate Control', 'google-maps-for-elementor'),
+                'label' => __('Rotate Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -462,7 +464,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'scale_control',
             [
-                'label' => __('Scale Control', 'google-maps-for-elementor'),
+                'label' => __('Scale Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -471,7 +473,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'scrollwheel',
             [
-                'label' => __('Scroll Wheel Zoom', 'google-maps-for-elementor'),
+                'label' => __('Scroll Wheel Zoom', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -480,7 +482,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'zoom_control',
             [
-                'label' => __('Zoom Control', 'google-maps-for-elementor'),
+                'label' => __('Zoom Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -489,7 +491,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'street_view',
             [
-                'label' => __('Street View', 'google-maps-for-elementor'),
+                'label' => __('Street View', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -498,7 +500,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'street_view_control',
             [
-                'label' => __('Street View Control', 'google-maps-for-elementor'),
+                'label' => __('Street View Control', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -510,7 +512,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->start_controls_section(
             'section_style',
             [
-                'label' => __('Map Style', 'google-maps-for-elementor'),
+                'label' => __('Map Style', 'advanced-google-maps-for-elementor'),
                 'tab' => Controls_Manager::TAB_STYLE,
             ]
         );
@@ -518,14 +520,14 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_control(
             'map_type',
             [
-                'label' => __('Map Type', 'google-maps-for-elementor'),
+                'label' => __('Map Type', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::SELECT,
                 'default' => 'roadmap',
                 'options' => [
-                    'roadmap' => __('Roadmap', 'google-maps-for-elementor'),
-                    'satellite' => __('Satellite', 'google-maps-for-elementor'),
-                    'hybrid' => __('Hybrid', 'google-maps-for-elementor'),
-                    'terrain' => __('Terrain', 'google-maps-for-elementor'),
+                    'roadmap' => __('Roadmap', 'advanced-google-maps-for-elementor'),
+                    'satellite' => __('Satellite', 'advanced-google-maps-for-elementor'),
+                    'hybrid' => __('Hybrid', 'advanced-google-maps-for-elementor'),
+                    'terrain' => __('Terrain', 'advanced-google-maps-for-elementor'),
                 ],
             ]
         );
@@ -533,7 +535,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_responsive_control(
             'map_width',
             [
-                'label' => __('Map Width', 'google-maps-for-elementor'),
+                'label' => __('Map Width', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '100%',
                 'selectors' => [
@@ -545,7 +547,7 @@ class Google_Maps_Widget extends Widget_Base
         $this->add_responsive_control(
             'map_height',
             [
-                'label' => __('Map Height', 'google-maps-for-elementor'),
+                'label' => __('Map Height', 'advanced-google-maps-for-elementor'),
                 'type' => Controls_Manager::TEXT,
                 'default' => '400px',
                 'selectors' => [
@@ -559,7 +561,7 @@ class Google_Maps_Widget extends Widget_Base
             \Elementor\Group_Control_Border::get_type(),
             [
                 'name' => 'map_border',
-                'label' => __('Border', 'google-maps-for-elementor'),
+                'label' => __('Border', 'advanced-google-maps-for-elementor'),
                 'selector' => '{{WRAPPER}} #gme-map',
             ]
         );
@@ -677,14 +679,17 @@ class Google_Maps_Widget extends Widget_Base
                     <div class="gme-map-info">
                         <i class="eicon-google-maps" aria-hidden="true"></i>
                         <div class="gme-map-notice">
-                            <?php esc_html_e('Google Map will be displayed here', 'google-maps-for-elementor'); ?>
+                            <?php esc_html_e('Google Map will be displayed here', 'advanced-google-maps-for-elementor'); ?>
                         </div>
                         <?php if (!empty($settings['locations'])): ?>
                             <div class="gme-map-locations">
-                                <?php echo esc_html(sprintf(
-                                    __('Locations added: %d', 'google-maps-for-elementor'),
+                                <?php
+                                echo esc_html(sprintf(
+                                    /* translators: %d: Number of locations added to the map */
+                                    __('Locations added: %d', 'advanced-google-maps-for-elementor'),
                                     count($settings['locations'])
-                                )); ?>
+                                ));
+                                ?>
                             </div>
                         <?php endif; ?>
                     </div>
@@ -693,7 +698,7 @@ class Google_Maps_Widget extends Widget_Base
         </div>
         <?php
 
-        wp_enqueue_script('gme-maps-init', plugins_url('../assets/js/map.js', __FILE__), array('gme-google-maps-loader'), null, true);
+        wp_enqueue_script('gme-maps-init', plugins_url('../assets/js/map.js', __FILE__), array('gme-google-maps-loader'), GME_VERSION, true);
     }
 
     protected function _content_template()
@@ -707,11 +712,14 @@ class Google_Maps_Widget extends Widget_Base
                         <div class="gme-map-info">
                             <i class="eicon-google-maps" aria-hidden="true"></i>
                             <div class="gme-map-notice">
-                                <?php esc_html_e('Google Map will be displayed here', 'google-maps-for-elementor'); ?>
+                                <?php esc_html_e('Google Map will be displayed here', 'advanced-google-maps-for-elementor'); ?>
                             </div>
                             <# if (settings.locations && settings.locations.length> 0) { #>
                                 <div class="gme-map-locations">
-                                    <?php esc_html_e('Locations added:', 'google-maps-for-elementor'); ?> {{
+                                    <?php
+                                    /* translators: %d: Number of locations added to the map */
+                                    echo esc_html__('Locations added: %d', 'advanced-google-maps-for-elementor'); ?>
+                                    {{
                                     settings.locations.length }}
                                 </div>
                                 <# } #>

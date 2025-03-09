@@ -147,7 +147,10 @@ async function initMap(mapElement) {
     console.error("Error initializing map:", error);
     const notice = mapElement.querySelector(".gme-map-notice");
     if (notice) {
-      notice.textContent = "Error loading map. Please try again later.";
+      // Use translated string from localization
+      notice.textContent = window.gmeL10n
+        ? window.gmeL10n.error_loading_map
+        : "Error loading map. Please try again later.";
     }
   }
 }
@@ -155,7 +158,14 @@ async function initMap(mapElement) {
 // Initialize all maps when DOM is ready
 function initAllMaps() {
   document.querySelectorAll(".gme-map").forEach((mapElement) => {
-    initMap(mapElement);
+    // Ensure Google Maps API is loaded
+    if (typeof google !== "undefined" && google.maps) {
+      initMap(mapElement);
+    } else {
+      // If Google Maps isn't loaded yet, wait for it
+      window.gmeMapInit = window.gmeMapInit || [];
+      window.gmeMapInit.push(() => initMap(mapElement));
+    }
   });
 }
 
@@ -166,6 +176,13 @@ if (document.readyState === "loading") {
   initAllMaps();
 }
 
+// Handle callback from async Google Maps load
+window.gmeInitCallback = function () {
+  if (window.gmeMapInit && window.gmeMapInit.length) {
+    window.gmeMapInit.forEach((init) => init());
+  }
+};
+
 // Handle Elementor frontend initialization
 if (window.elementorFrontend) {
   elementorFrontend.hooks.addAction(
@@ -173,7 +190,12 @@ if (window.elementorFrontend) {
     function ($scope) {
       const mapElement = $scope[0].querySelector(".gme-map");
       if (mapElement) {
-        initMap(mapElement);
+        if (typeof google !== "undefined" && google.maps) {
+          initMap(mapElement);
+        } else {
+          window.gmeMapInit = window.gmeMapInit || [];
+          window.gmeMapInit.push(() => initMap(mapElement));
+        }
       }
     }
   );

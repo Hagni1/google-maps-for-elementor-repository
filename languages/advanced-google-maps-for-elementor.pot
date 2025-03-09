@@ -1,0 +1,405 @@
+# Copyright (C) 2025 Your Name
+# This file is distributed under the same license as the Advanced Google Maps For Elementor plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Advanced Google Maps For Elementor 1.0.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/advanced-google-maps-for-elementor\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-03-09T18:24:17+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.11.0\n"
+"X-Domain: advanced-google-maps-for-elementor\n"
+
+#. Plugin Name of the plugin
+#: advanced-google-maps-for-elementor.php
+msgid "Advanced Google Maps For Elementor"
+msgstr ""
+
+#. Description of the plugin
+#: advanced-google-maps-for-elementor.php
+msgid "A simple Google Maps integration for Elementor using Google JavaScript API."
+msgstr ""
+
+#. Author of the plugin
+#: advanced-google-maps-for-elementor.php
+msgid "Your Name"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:37
+msgid "Error loading map. Please try again later."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:48
+msgid "Google Maps"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:70
+#: advanced-google-maps-for-elementor.php:71
+msgid "Google Maps Settings"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:87
+msgid "API Key updated successfully."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:94
+msgid "Google Maps API Key"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:96
+msgid "Important: Make sure to enable the following APIs in your Google Cloud Console:"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:99
+msgid "Maps JavaScript API"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:100
+msgid "Geocoding API - Required for address to coordinates conversion"
+msgstr ""
+
+#. translators: %s: Google Cloud Console URL
+#: advanced-google-maps-for-elementor.php:105
+msgid "Visit %s to enable these APIs for your project."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:113
+msgid "API Key"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:117
+msgid "Enter your Google Maps API key. Both Maps JavaScript API and Geocoding API must be enabled."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:119
+msgid "Verify API Key"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:122
+msgid "Save API Key"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:51
+msgid "Verifying..."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:52
+msgid "API key is valid!"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:53
+msgid "Maps JavaScript API error:"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:54
+msgid "Geocoding API error:"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:84
+msgid "You do not have permission to perform this action."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:90
+msgid "API key cannot be empty."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:124
+msgid "Maps JavaScript API is working correctly."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:126
+msgid "Invalid API key or domain not authorized."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:143
+msgid "Geocoding API is working correctly."
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:145
+msgid "Geocoding API error: %s"
+msgstr ""
+
+#: advanced-google-maps-for-elementor.php:147
+msgid "Invalid response from Geocoding API."
+msgstr ""
+
+#: widgets/google-maps-widget.php:20
+msgid "Advanced Google Maps"
+msgstr ""
+
+#: widgets/google-maps-widget.php:88
+#: widgets/google-maps-widget.php:169
+msgid "Locations"
+msgstr ""
+
+#: widgets/google-maps-widget.php:98
+msgid "Location Name"
+msgstr ""
+
+#: widgets/google-maps-widget.php:103
+msgid "New Location"
+msgstr ""
+
+#: widgets/google-maps-widget.php:110
+msgid "Position Type"
+msgstr ""
+
+#: widgets/google-maps-widget.php:114
+msgid "Coordinates"
+msgstr ""
+
+#: widgets/google-maps-widget.php:115
+#: widgets/google-maps-widget.php:123
+msgid "Address"
+msgstr ""
+
+#: widgets/google-maps-widget.php:129
+msgid "Enter a full address to automatically get coordinates"
+msgstr ""
+
+#: widgets/google-maps-widget.php:139
+msgid "Latitude"
+msgstr ""
+
+#: widgets/google-maps-widget.php:154
+msgid "Longitude"
+msgstr ""
+
+#: widgets/google-maps-widget.php:183
+msgid "Center Options"
+msgstr ""
+
+#: widgets/google-maps-widget.php:191
+msgid "Center Type"
+msgstr ""
+
+#: widgets/google-maps-widget.php:195
+#: widgets/google-maps-widget.php:412
+msgid "Auto"
+msgstr ""
+
+#: widgets/google-maps-widget.php:196
+msgid "Manual"
+msgstr ""
+
+#: widgets/google-maps-widget.php:204
+msgid "Center Latitude"
+msgstr ""
+
+#: widgets/google-maps-widget.php:214
+msgid "Center Longitude"
+msgstr ""
+
+#: widgets/google-maps-widget.php:224
+msgid "Zoom"
+msgstr ""
+
+#: widgets/google-maps-widget.php:236
+msgid "Advanced Configuration"
+msgstr ""
+
+#: widgets/google-maps-widget.php:246
+msgid "View Google Maps Options Documentation »"
+msgstr ""
+
+#: widgets/google-maps-widget.php:254
+msgid "Rendering Type"
+msgstr ""
+
+#: widgets/google-maps-widget.php:258
+msgid "Raster"
+msgstr ""
+
+#: widgets/google-maps-widget.php:259
+msgid "Unspecified"
+msgstr ""
+
+#: widgets/google-maps-widget.php:260
+msgid "Vector"
+msgstr ""
+
+#: widgets/google-maps-widget.php:262
+msgid "Choose how the map should be rendered."
+msgstr ""
+
+#: widgets/google-maps-widget.php:269
+msgid "Tilt"
+msgstr ""
+
+#: widgets/google-maps-widget.php:274
+msgid "Controls the angle of 45° imagery, value from 0 to 45."
+msgstr ""
+
+#: widgets/google-maps-widget.php:281
+msgid "Enable Tilt Interaction"
+msgstr ""
+
+#: widgets/google-maps-widget.php:284
+msgid "Allow users to change the tilt."
+msgstr ""
+
+#: widgets/google-maps-widget.php:291
+msgid "Enable Map Restrictions"
+msgstr ""
+
+#: widgets/google-maps-widget.php:300
+msgid "North Latitude Bound"
+msgstr ""
+
+#: widgets/google-maps-widget.php:310
+msgid "South Latitude Bound"
+msgstr ""
+
+#: widgets/google-maps-widget.php:320
+msgid "East Longitude Bound"
+msgstr ""
+
+#: widgets/google-maps-widget.php:330
+msgid "West Longitude Bound"
+msgstr ""
+
+#: widgets/google-maps-widget.php:340
+msgid "Background Color"
+msgstr ""
+
+#: widgets/google-maps-widget.php:343
+msgid "Set a custom background color for the map. Leave empty for default."
+msgstr ""
+
+#: widgets/google-maps-widget.php:350
+msgid "Disable Default UI"
+msgstr ""
+
+#: widgets/google-maps-widget.php:359
+msgid "Camera Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:368
+msgid "Fullscreen Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:377
+msgid "Clickable Icons"
+msgstr ""
+
+#: widgets/google-maps-widget.php:386
+msgid "Color Scheme"
+msgstr ""
+
+#: widgets/google-maps-widget.php:390
+msgid "Light"
+msgstr ""
+
+#: widgets/google-maps-widget.php:391
+msgid "Dark"
+msgstr ""
+
+#: widgets/google-maps-widget.php:399
+msgid "Disable Double Click Zoom"
+msgstr ""
+
+#: widgets/google-maps-widget.php:408
+msgid "Gesture Handling"
+msgstr ""
+
+#: widgets/google-maps-widget.php:413
+msgid "None"
+msgstr ""
+
+#: widgets/google-maps-widget.php:414
+msgid "Cooperative"
+msgstr ""
+
+#: widgets/google-maps-widget.php:415
+msgid "Greedy"
+msgstr ""
+
+#: widgets/google-maps-widget.php:423
+msgid "Keyboard Shortcuts"
+msgstr ""
+
+#: widgets/google-maps-widget.php:432
+msgid "Maximum Zoom Level"
+msgstr ""
+
+#: widgets/google-maps-widget.php:443
+msgid "Minimum Zoom Level"
+msgstr ""
+
+#: widgets/google-maps-widget.php:454
+msgid "Rotate Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:463
+msgid "Scale Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:472
+msgid "Scroll Wheel Zoom"
+msgstr ""
+
+#: widgets/google-maps-widget.php:481
+msgid "Zoom Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:490
+msgid "Street View"
+msgstr ""
+
+#: widgets/google-maps-widget.php:499
+msgid "Street View Control"
+msgstr ""
+
+#: widgets/google-maps-widget.php:511
+msgid "Map Style"
+msgstr ""
+
+#: widgets/google-maps-widget.php:519
+msgid "Map Type"
+msgstr ""
+
+#: widgets/google-maps-widget.php:523
+msgid "Roadmap"
+msgstr ""
+
+#: widgets/google-maps-widget.php:524
+msgid "Satellite"
+msgstr ""
+
+#: widgets/google-maps-widget.php:525
+msgid "Hybrid"
+msgstr ""
+
+#: widgets/google-maps-widget.php:526
+msgid "Terrain"
+msgstr ""
+
+#: widgets/google-maps-widget.php:534
+msgid "Map Width"
+msgstr ""
+
+#: widgets/google-maps-widget.php:546
+msgid "Map Height"
+msgstr ""
+
+#: widgets/google-maps-widget.php:560
+msgid "Border"
+msgstr ""
+
+#: widgets/google-maps-widget.php:678
+#: widgets/google-maps-widget.php:711
+msgid "Google Map will be displayed here"
+msgstr ""
+
+#: widgets/google-maps-widget.php:685
+msgid "Locations added: %d"
+msgstr ""
+
+#. translators: %s is replaced with the number of locations
+#: widgets/google-maps-widget.php:717
+msgid "Locations added:"
+msgstr ""
