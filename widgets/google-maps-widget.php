@@ -32,31 +32,31 @@ class Google_Maps_Widget extends Widget_Base
 
     public function get_style_depends()
     {
-        return ['gme-widget-style'];
+        return ['agmfe-widget-style'];
     }
 
     public function __construct($data = [], $args = null)
     {
         parent::__construct($data, $args);
 
-        $version = GME_VERSION ?? '1.0.0';
+        $version = AGMFE_VERSION ?? '1.0.0';
         // Register Axios
-        wp_register_script('axios', plugins_url('/assets/js/lib/axios.min.js', __FILE__), array(), $version, true);
+        wp_register_script('axios', plugins_url('/node_modules/js/lib/axios.js', __FILE__), array(), $version, true);
 
         // Register widget styles with version
         wp_register_style(
-            'gme-widget-style',
+            'agmfe-widget-style',
             false,
             array(),
             $version
         );
 
-        wp_add_inline_style('gme-widget-style', '
-            .gme-map-wrapper {
+        wp_add_inline_style('agmfe-widget-style', '
+            .agmfe-map-wrapper {
                 position: relative;
                 width: 100%;
             }
-            .gme-map-placeholder {
+            .agmfe-map-placeholder {
                 background-color: #f7f7f7;
                 border: 1px dashed #d5dadf;
                 border-radius: 3px;
@@ -64,19 +64,19 @@ class Google_Maps_Widget extends Widget_Base
                 align-items: center;
                 justify-content: center;
             }
-            .gme-map-info {
+            .agmfe-map-info {
                 text-align: center;
                 padding: 20px;
                 color: #6d7882;
             }
-            .gme-map-info .eicon-google-maps {
+            .agmfe-map-info .eicon-google-maps {
                 font-size: 32px;
                 margin-bottom: 10px;
             }
-            .gme-map-notice {
+            .agmfe-map-notice {
                 margin-bottom: 5px;
             }
-            .gme-map-locations {
+            .agmfe-map-locations {
                 font-size: 12px;
                 font-style: italic;
             }
@@ -539,7 +539,7 @@ class Google_Maps_Widget extends Widget_Base
                 'type' => Controls_Manager::TEXT,
                 'default' => '100%',
                 'selectors' => [
-                    '{{WRAPPER}} #gme-map' => 'width: {{VALUE}};',
+                    '{{WRAPPER}} #agmfe-map' => 'width: {{VALUE}};',
                 ],
             ]
         );
@@ -551,7 +551,7 @@ class Google_Maps_Widget extends Widget_Base
                 'type' => Controls_Manager::TEXT,
                 'default' => '400px',
                 'selectors' => [
-                    '{{WRAPPER}} #gme-map' => 'height: {{VALUE}};',
+                    '{{WRAPPER}} #agmfe-map' => 'height: {{VALUE}};',
                 ],
             ]
         );
@@ -562,7 +562,7 @@ class Google_Maps_Widget extends Widget_Base
             [
                 'name' => 'map_border',
                 'label' => __('Border', 'advanced-google-maps-for-elementor'),
-                'selector' => '{{WRAPPER}} #gme-map',
+                'selector' => '{{WRAPPER}} #agmfe-map',
             ]
         );
 
@@ -572,7 +572,7 @@ class Google_Maps_Widget extends Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
-        $map_id = 'gme-map-' . $this->get_id();
+        $map_id = 'agmfe-map-' . $this->get_id();
 
         // Enqueue Axios
         wp_enqueue_script('axios');
@@ -666,23 +666,25 @@ class Google_Maps_Widget extends Widget_Base
 
         $style = 'width: ' . $settings['map_width'] . '; height: ' . $settings['map_height'] . ';';
 
-        // Get API key for geocoding
-        $api_key = get_option('gme_api_key', '');
+        // Enqueue the API handler script that will handle the API key
+        wp_enqueue_script('agmfe-api-handler', plugins_url('../assets/js/api-handler.js', __FILE__), array(), AGMFE_VERSION, true);
+
+        // Add inline script with API key
+        $api_key = get_option('agmfe_api_key', '');
+        wp_add_inline_script('agmfe-api-handler', 'window.agmfeApiKey = "' . esc_js($api_key) . '";', 'before');
+
         ?>
-        <script>
-            window.gmeApiKey = '<?php echo esc_js($api_key); ?>';
-        </script>
-        <div class="gme-map-wrapper">
-            <div id="<?php echo esc_attr($map_id); ?>" class="gme-map" style="<?php echo esc_attr($style); ?>"
+        <div class="agmfe-map-wrapper">
+            <div id="<?php echo esc_attr($map_id); ?>" class="agmfe-map" style="<?php echo esc_attr($style); ?>"
                 data-map-settings="<?php echo esc_attr(json_encode($map_data)); ?>">
-                <div class="gme-map-placeholder" style="<?php echo esc_attr($style); ?>">
-                    <div class="gme-map-info">
+                <div class="agmfe-map-placeholder" style="<?php echo esc_attr($style); ?>">
+                    <div class="agmfe-map-info">
                         <i class="eicon-google-maps" aria-hidden="true"></i>
-                        <div class="gme-map-notice">
+                        <div class="agmfe-map-notice">
                             <?php esc_html_e('Google Map will be displayed here', 'advanced-google-maps-for-elementor'); ?>
                         </div>
                         <?php if (!empty($settings['locations'])): ?>
-                            <div class="gme-map-locations">
+                            <div class="agmfe-map-locations">
                                 <?php
                                 echo esc_html(sprintf(
                                     /* translators: %d: Number of locations added to the map */
@@ -698,7 +700,7 @@ class Google_Maps_Widget extends Widget_Base
         </div>
         <?php
 
-        wp_enqueue_script('gme-maps-init', plugins_url('../assets/js/map.js', __FILE__), array('gme-google-maps-loader'), GME_VERSION, true);
+        wp_enqueue_script('agmfe-maps-init', plugins_url('../assets/js/map.js', __FILE__), array('agmfe-google-maps-loader'), AGMFE_VERSION, true);
     }
 
     protected function _content_template()
@@ -706,16 +708,16 @@ class Google_Maps_Widget extends Widget_Base
         ?>
         <# var mapId='elementor-preview-' + view.getID(); var style='width: ' + settings.map_width + '; height: ' +
             settings.map_height + ';' ; #>
-            <div class="gme-map-wrapper">
-                <div id="{{ mapId }}" class="gme-map" style="{{ style }}">
-                    <div class="gme-map-placeholder" style="{{ style }}">
-                        <div class="gme-map-info">
+            <div class="agmfe-map-wrapper">
+                <div id="{{ mapId }}" class="agmfe-map" style="{{ style }}">
+                    <div class="agmfe-map-placeholder" style="{{ style }}">
+                        <div class="agmfe-map-info">
                             <i class="eicon-google-maps" aria-hidden="true"></i>
-                            <div class="gme-map-notice">
+                            <div class="agmfe-map-notice">
                                 <?php esc_html_e('Google Map will be displayed here', 'advanced-google-maps-for-elementor'); ?>
                             </div>
                             <# if (settings.locations && settings.locations.length> 0) { #>
-                                <div class="gme-map-locations">
+                                <div class="agmfe-map-locations">
                                     <?php
                                     /* translators: %d: Number of locations added to the map */
                                     echo esc_html__('Locations added: %d', 'advanced-google-maps-for-elementor'); ?>

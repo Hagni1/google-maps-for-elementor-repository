@@ -1,0 +1,10 @@
+# Ignore the build directory
+/build/
+# Ignore the node_modules directory
+/node_modules/
+# Ignore the .env file
+.env
+# Ignore log files
+*.log
+# Ignore the vendor directory
+/vendor/

@@ -3,9 +3,9 @@
  * Handles API key verification
  */
 jQuery(document).ready(function ($) {
-  const $verifyButton = $("#gme_verify_api_key");
-  const $apiKeyField = $("#gme_api_key");
-  const $resultsDiv = $("#gme_api_validation_results");
+  const $verifyButton = $("#agmfe_verify_api_key");
+  const $apiKeyField = $("#agmfe_api_key");
+  const $resultsDiv = $("#agmfe_api_validation_results");
 
   $verifyButton.on("click", function (e) {
     e.preventDefault();
@@ -23,28 +23,28 @@ jQuery(document).ready(function ($) {
     // Show verifying message
     $resultsDiv.html(
       '<div class="notice notice-info inline"><p>' +
-        gmeAdmin.verifying +
+        agmfeAdmin.verifying +
         "</p></div>"
     );
     $verifyButton.prop("disabled", true);
 
     // Make AJAX request to verify API key
     $.ajax({
-      url: gmeAdmin.ajaxurl,
+      url: agmfeAdmin.ajaxurl,
       type: "POST",
       data: {
-        action: "gme_verify_api_key",
+        action: "agmfe_verify_api_key",
         api_key: apiKey,
-        nonce: gmeAdmin.nonce,
+        nonce: agmfeAdmin.nonce,
       },
       success: function (response) {
         if (response.success) {
           const result = response.data;
           $resultsDiv.html(
             '<div class="notice notice-success inline"><p>' +
-              gmeAdmin.success +
+              agmfeAdmin.success +
               "</p>" +
-              '<ul class="gme-verification-results">' +
+              '<ul class="agmfe-verification-results">' +
               "<li>✅ " +
               result.maps_api.message +
               "</li>" +
@@ -56,7 +56,7 @@ jQuery(document).ready(function ($) {
         } else {
           const result = response.data;
           let errorHtml =
-            '<div class="notice notice-error inline"><p>API validation failed:</p><ul class="gme-verification-results">';
+            '<div class="notice notice-error inline"><p>API validation failed:</p><ul class="agmfe-verification-results">';
 
           if (result && result.maps_api) {
             let statusIcon = result.maps_api.status === "success" ? "✅" : "❌";
@@ -64,7 +64,7 @@ jQuery(document).ready(function ($) {
               "<li>" +
               statusIcon +
               " " +
-              gmeAdmin.mapsApiError +
+              agmfeAdmin.mapsApiError +
               " " +
               result.maps_api.message +
               "</li>";
@@ -77,7 +77,7 @@ jQuery(document).ready(function ($) {
               "<li>" +
               statusIcon +
               " " +
-              gmeAdmin.geocodingApiError +
+              agmfeAdmin.geocodingApiError +
               " " +
               result.geocoding_api.message +
               "</li>";

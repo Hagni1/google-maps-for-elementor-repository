@@ -43,7 +43,7 @@ async function geocodeAddress(address, apiKey) {
 
 async function initMap(mapElement) {
   try {
-    const placeholder = mapElement.querySelector(".gme-map-placeholder");
+    const placeholder = mapElement.querySelector(".agmfe-map-placeholder");
     const mapSettings = JSON.parse(mapElement.dataset.mapSettings);
 
     // Process locations that have addresses but no coordinates
@@ -56,7 +56,7 @@ async function initMap(mapElement) {
         if (location.position_type === "address" && location.address) {
           const coords = await geocodeAddress(
             location.address,
-            window.gmeApiKey
+            window.agmfeApiKey
           );
           if (coords) {
             location.lat = coords.lat;
@@ -145,11 +145,11 @@ async function initMap(mapElement) {
     return map;
   } catch (error) {
     console.error("Error initializing map:", error);
-    const notice = mapElement.querySelector(".gme-map-notice");
+    const notice = mapElement.querySelector(".agmfe-map-notice");
     if (notice) {
       // Use translated string from localization
-      notice.textContent = window.gmeL10n
-        ? window.gmeL10n.error_loading_map
+      notice.textContent = window.agmfeL10n
+        ? window.agmfeL10n.error_loading_map
         : "Error loading map. Please try again later.";
     }
   }
@@ -157,14 +157,14 @@ async function initMap(mapElement) {
 
 // Initialize all maps when DOM is ready
 function initAllMaps() {
-  document.querySelectorAll(".gme-map").forEach((mapElement) => {
+  document.querySelectorAll(".agmfe-map").forEach((mapElement) => {
     // Ensure Google Maps API is loaded
     if (typeof google !== "undefined" && google.maps) {
       initMap(mapElement);
     } else {
       // If Google Maps isn't loaded yet, wait for it
-      window.gmeMapInit = window.gmeMapInit || [];
-      window.gmeMapInit.push(() => initMap(mapElement));
+      window.agmfeMapInit = window.agmfeMapInit || [];
+      window.agmfeMapInit.push(() => initMap(mapElement));
     }
   });
 }
@@ -177,9 +177,9 @@ if (document.readyState === "loading") {
 }
 
 // Handle callback from async Google Maps load
-window.gmeInitCallback = function () {
-  if (window.gmeMapInit && window.gmeMapInit.length) {
-    window.gmeMapInit.forEach((init) => init());
+window.agmfeInitCallback = function () {
+  if (window.agmfeMapInit && window.agmfeMapInit.length) {
+    window.agmfeMapInit.forEach((init) => init());
   }
 };
 
@@ -188,13 +188,13 @@ if (window.elementorFrontend) {
   elementorFrontend.hooks.addAction(
     "frontend/element_ready/google_maps_widget.default",
     function ($scope) {
-      const mapElement = $scope[0].querySelector(".gme-map");
+      const mapElement = $scope[0].querySelector(".agmfe-map");
       if (mapElement) {
         if (typeof google !== "undefined" && google.maps) {
           initMap(mapElement);
         } else {
-          window.gmeMapInit = window.gmeMapInit || [];
-          window.gmeMapInit.push(() => initMap(mapElement));
+          window.agmfeMapInit = window.agmfeMapInit || [];
+          window.agmfeMapInit.push(() => initMap(mapElement));
         }
       }
     }

@@ -8,7 +8,7 @@
  * Text Domain: advanced-google-maps-for-elementor
  * Domain Path: /languages
  * License: GPLv2 or later
- * 
+ * Requires Plugins: elementor 
  * 
  *  * Advanced Google Maps For Elementor is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,66 +30,65 @@ if (!defined('ABSPATH')) {
 }
 
 // Define plugin version
-if (!defined('GME_VERSION')) {
-    define('GME_VERSION', '1.0.0');
+if (!defined('AGMFE_VERSION')) {
+    define('AGMFE_VERSION', '1.0.0');
 }
 
-// Load plugin text domain for translations
-function gme_load_textdomain()
-{
-    load_plugin_textdomain('advanced-google-maps-for-elementor', false, dirname(plugin_basename(__FILE__)) . '/languages');
-}
-add_action('init', 'gme_load_textdomain');
-
-
-function gme_enqueue_scripts()
+function agmfe_enqueue_scripts()
 {
     // Get the API key from the options
-    $api_key = get_option('gme_api_key', 'YOUR_GOOGLE_MAPS_API_KEY');
-    $version = GME_VERSION ?? '1.0.0'; // Add plugin version constant
+    $api_key = get_option('agmfe_api_key', 'YOUR_GOOGLE_MAPS_API_KEY');
+    $version = AGMFE_VERSION ?? '1.0.0'; // Add plugin version constant
 
-    // Register and enqueue Google Maps API with geocoding library
-    wp_register_script('gme-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '&libraries=places&callback=gmeInitCallback&loading=async', array(), $version, true);
-    wp_enqueue_script('gme-google-maps');
+    // Register API handler script first
+    wp_register_script('agmfe-api-handler', plugins_url('/assets/js/api-handler.js', __FILE__), array(), $version, true);
+    wp_enqueue_script('agmfe-api-handler');
+
+    // Add inline script with API key to the API handler
+    wp_add_inline_script('agmfe-api-handler', 'window.agmfeApiKey = "' . esc_js($api_key) . '";', 'before');
+
+    // Register and enqueue Google Maps API with geocoding library - depend on api-handler
+    wp_register_script('agmfe-google-maps', 'https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '&libraries=places&callback=agmfeInitCallback&loading=async', array('agmfe-api-handler'), $version, true);
+    wp_enqueue_script('agmfe-google-maps');
 
     // Register Axios from local file
-    wp_register_script('axios', plugins_url('/assets/js/lib/axios.min.js', __FILE__), array(), $version, true);
+    wp_register_script('axios', plugins_url('/node_modules/js/lib/axios.js', __FILE__), array(), $version, true);
 
     // Register and enqueue our map initialization script
-    wp_register_script('gme-maps-init', plugins_url('/assets/js/map.js', __FILE__), array('gme-google-maps', 'axios'), $version, true);
-    wp_enqueue_script('gme-maps-init');
+    wp_register_script('agmfe-maps-init', plugins_url('/assets/js/map.js', __FILE__), array('agmfe-google-maps', 'axios'), $version, true);
+    wp_enqueue_script('agmfe-maps-init');
 
     // Localize script with translations
-    wp_localize_script('gme-maps-init', 'gmeL10n', array(
+    wp_localize_script('agmfe-maps-init', 'agmfeL10n', array(
         'error_loading_map' => __('Error loading map. Please try again later.', 'advanced-google-maps-for-elementor'),
     ));
 }
-add_action('wp_enqueue_scripts', 'gme_enqueue_scripts');
+add_action('wp_enqueue_scripts', 'agmfe_enqueue_scripts');
 
 // Enqueue admin scripts
-function gme_enqueue_admin_scripts($hook)
+function agmfe_enqueue_admin_scripts($hook)
 {
-    if ('toplevel_page_gme-settings' !== $hook) {
+    if ('toplevel_page_agmfe-settings' !== $hook) {
         return;
     }
 
-    $version = GME_VERSION ?? '1.0.0'; // Add plugin version constant
-    wp_enqueue_script('gme-admin-js', plugins_url('/assets/js/admin.js', __FILE__), array('jquery'), $version, true);
-    wp_localize_script('gme-admin-js', 'gmeAdmin', array(
+    $version = AGMFE_VERSION ?? '1.0.0'; // Add plugin version constant
+    wp_enqueue_script('agmfe-admin-js', plugins_url('/assets/js/admin.js', __FILE__), array('jquery'), $version, true);
+    wp_localize_script('agmfe-admin-js', 'agmfeAdmin', array(
         'ajaxurl' => admin_url('admin-ajax.php'),
-        'nonce' => wp_create_nonce('gme-verify-api-key'),
+        'nonce' => wp_create_nonce('agmfe-verify-api-key'),
         'verifying' => __('Verifying...', 'advanced-google-maps-for-elementor'),
         'success' => __('API key is valid!', 'advanced-google-maps-for-elementor'),
         'mapsApiError' => __('Maps JavaScript API error:', 'advanced-google-maps-for-elementor'),
         'geocodingApiError' => __('Geocoding API error:', 'advanced-google-maps-for-elementor'),
     ));
 }
-add_action('admin_enqueue_scripts', 'gme_enqueue_admin_scripts');
+add_action('admin_enqueue_scripts', 'agmfe_enqueue_admin_scripts');
 
 // AJAX handler for API key verification
-function gme_verify_api_key()
+function agmfe_verify_api_key()
 {
-    check_ajax_referer('gme-verify-api-key', 'nonce');
+    check_ajax_referer('agmfe-verify-api-key', 'nonce');
 
     if (!current_user_can('manage_options')) {
         wp_send_json_error(__('You do not have permission to perform this action.', 'advanced-google-maps-for-elementor'));
@@ -165,10 +164,10 @@ function gme_verify_api_key()
         wp_send_json_error($result);
     }
 }
-add_action('wp_ajax_gme_verify_api_key', 'gme_verify_api_key');
+add_action('wp_ajax_agmfe_verify_api_key', 'agmfe_verify_api_key');
 
 // Add a new Elementor widget category
-function gme_add_elementor_widget_categories($elements_manager)
+function agmfe_add_elementor_widget_categories($elements_manager)
 {
     $elements_manager->add_category(
         'advanced-google-maps-for-elementor',
@@ -178,10 +177,10 @@ function gme_add_elementor_widget_categories($elements_manager)
         ]
     );
 }
-add_action('elementor/elements/categories_registered', 'gme_add_elementor_widget_categories');
+add_action('elementor/elements/categories_registered', 'agmfe_add_elementor_widget_categories');
 
 // Elementor integration - register widget
-function gme_register_elementor_widget()
+function agmfe_register_elementor_widget()
 {
     // Check if Elementor is active
     if (defined('ELEMENTOR_PATH') && class_exists('\Elementor\Plugin')) {
@@ -189,36 +188,36 @@ function gme_register_elementor_widget()
         \Elementor\Plugin::instance()->widgets_manager->register_widget_type(new \Google_Maps_For_Elementor\Google_Maps_Widget());
     }
 }
-add_action('elementor/widgets/widgets_registered', 'gme_register_elementor_widget');
+add_action('elementor/widgets/widgets_registered', 'agmfe_register_elementor_widget');
 
 // Admin Menu: Add new tab for API key settings
-function gme_register_admin_menu()
+function agmfe_register_admin_menu()
 {
     add_menu_page(
         __('Google Maps Settings', 'advanced-google-maps-for-elementor'),
         __('Google Maps Settings', 'advanced-google-maps-for-elementor'),
         'manage_options',
-        'gme-settings',
-        'gme_settings_page',
+        'agmfe-settings',
+        'agmfe_settings_page',
         'dashicons-admin-site',
         81
     );
 }
-add_action('admin_menu', 'gme_register_admin_menu');
+add_action('admin_menu', 'agmfe_register_admin_menu');
 
-function gme_settings_page()
+function agmfe_settings_page()
 {
     // Process form submission
-    if (isset($_POST['gme_api_key_submit'])) {
-        if (check_admin_referer('gme_update_api_key')) {
-            if (isset($_POST['gme_api_key'])) {
-                update_option('gme_api_key', sanitize_text_field(wp_unslash($_POST['gme_api_key'])));
+    if (isset($_POST['agmfe_api_key_submit'])) {
+        if (check_admin_referer('agmfe_update_api_key')) {
+            if (isset($_POST['agmfe_api_key'])) {
+                update_option('agmfe_api_key', sanitize_text_field(wp_unslash($_POST['agmfe_api_key'])));
                 echo '<div class="updated"><p>' . esc_html__('API Key updated successfully.', 'advanced-google-maps-for-elementor') . '</p></div>';
             }
         }
     }
 
-    $api_key = get_option('gme_api_key', '');
+    $api_key = get_option('agmfe_api_key', '');
     ?>
     <div class="wrap">
         <h1><?php esc_html_e('Google Maps API Key', 'advanced-google-maps-for-elementor'); ?></h1>
@@ -237,24 +236,24 @@ function gme_settings_page()
             ); ?></p>
         </div>
         <form method="post" action="">
-            <?php wp_nonce_field('gme_update_api_key'); ?>
+            <?php wp_nonce_field('agmfe_update_api_key'); ?>
             <table class="form-table">
                 <tr valign="top">
                     <th scope="row"><?php esc_html_e('API Key', 'advanced-google-maps-for-elementor'); ?></th>
                     <td>
-                        <input type="text" id="gme_api_key" name="gme_api_key" value="<?php echo esc_attr($api_key); ?>"
+                        <input type="text" id="agmfe_api_key" name="agmfe_api_key" value="<?php echo esc_attr($api_key); ?>"
                             size="50" />
                         <p class="description">
                             <?php esc_html_e('Enter your Google Maps API key. Both Maps JavaScript API and Geocoding API must be enabled.', 'advanced-google-maps-for-elementor'); ?>
                         </p>
-                        <button type="button" id="gme_verify_api_key" class="button button-secondary">
+                        <button type="button" id="agmfe_verify_api_key" class="button button-secondary">
                             <?php esc_html_e('Verify API Key', 'advanced-google-maps-for-elementor'); ?>
                         </button>
-                        <div id="gme_api_validation_results" style="margin-top: 10px;"></div>
+                        <div id="agmfe_api_validation_results" style="margin-top: 10px;"></div>
                     </td>
                 </tr>
             </table>
-            <?php submit_button(__('Save API Key', 'advanced-google-maps-for-elementor'), 'primary', 'gme_api_key_submit'); ?>
+            <?php submit_button(__('Save API Key', 'advanced-google-maps-for-elementor'), 'primary', 'agmfe_api_key_submit'); ?>
         </form>
     </div>
     <?php
